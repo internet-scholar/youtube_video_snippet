@@ -194,19 +194,11 @@ class YoutubeVideoSnippet:
                         response['id'] = video_id['video_id']
                         response['retrieved_at'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                         response['description'] = "Video unavailable. It has probably been removed by the user."
-                        response['source'] = dict()
-                        response['source']['twitter_stream'] = True if video_id['twitter_stream'] == '1' else False
-                        response['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == '1' else False
-                        response['source']['twitter_search'] = True if video_id['twitter_search'] == '1' else False
                         json_writer.write("{}\n".format(json.dumps(response)))
                     else:
                         for item in response['items']:
                             item['snippet']['publishedAt'] = item['snippet']['publishedAt'].rstrip('Z').replace('T', ' ')
                             item['retrieved_at'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-                            item['source'] = dict()
-                            item['source']['twitter_stream'] = True if video_id['twitter_stream'] == '1' else False
-                            item['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == '1' else False
-                            item['source']['twitter_search'] = True if video_id['twitter_search'] == '1' else False
                             json_writer.write("{}\n".format(json.dumps(item)))
 
         logging.info("Compress file %s", output_json)
