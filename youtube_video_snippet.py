@@ -233,7 +233,7 @@ def main():
     args = parser.parse_args()
 
     config = read_dict_from_s3_url(url=args.config)
-    logger = AthenaLogger(app_name="youtube",
+    logger = AthenaLogger(app_name="youtube-video-snippet",
                           s3_bucket=config['aws']['s3-admin'],
                           athena_db=config['aws']['athena-admin'])
     try:
