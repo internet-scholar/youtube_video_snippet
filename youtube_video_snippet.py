@@ -9,6 +9,7 @@ from pathlib import Path
 import json
 from datetime import datetime
 import time
+import uuid
 
 SELECT_TWITTER_STREAM_VIDEO = """
 select distinct
@@ -212,7 +213,8 @@ class YoutubeVideoSnippet:
         compressed_file = compress(filename=output_json, delete_original=True)
 
         s3 = boto3.resource('s3')
-        s3_filename = "youtube_video_snippet/created_at={}/{}.json.bz2".format(datetime.utcnow().strftime("%Y-%m-%d"),
+        s3_filename = "youtube_video_snippet/created_at={}/{}-{}.json.bz2".format(datetime.utcnow().strftime("%Y-%m-%d"),
+                                                                               uuid.uuid4().hex,
                                                                                num_videos)
         logging.info("Upload file %s to bucket %s at %s", compressed_file, self.s3_data, s3_filename)
         s3.Bucket(self.s3_data).upload_file(str(compressed_file), s3_filename)
