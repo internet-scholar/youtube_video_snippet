@@ -36,7 +36,7 @@ select distinct
 from
   youtube_related_video
 where
-  created_at = cast(current_date as varchar)
+  creation_date = cast(current_date as varchar)
 """
 
 EXTRA_YOUTUBE_RELATED_VIDEO = """
@@ -213,7 +213,7 @@ class YoutubeVideoSnippet:
         compressed_file = compress(filename=output_json, delete_original=True)
 
         s3 = boto3.resource('s3')
-        s3_filename = "youtube_video_snippet/created_at={}/{}-{}.json.bz2".format(datetime.utcnow().strftime("%Y-%m-%d"),
+        s3_filename = "youtube_video_snippet/creation_date={}/{}-{}.json.bz2".format(datetime.utcnow().strftime("%Y-%m-%d"),
                                                                                uuid.uuid4().hex,
                                                                                num_videos)
         logging.info("Upload file %s to bucket %s at %s", compressed_file, self.s3_data, s3_filename)
