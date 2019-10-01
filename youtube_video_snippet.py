@@ -195,18 +195,18 @@ class YoutubeVideoSnippet:
                         response['retrieved_at'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                         response['description'] = "Video unavailable. It has probably been removed by the user."
                         response['source'] = dict()
-                        response['source']['twitter_stream'] = True if video_id['twitter_stream'] == 1 else False
-                        response['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == 1 else False
-                        response['source']['twitter_search'] = True if video_id['twitter_search'] == 1 else False
+                        response['source']['twitter_stream'] = True if video_id['twitter_stream'] == '1' else False
+                        response['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == '1' else False
+                        response['source']['twitter_search'] = True if video_id['twitter_search'] == '1' else False
                         json_writer.write("{}\n".format(json.dumps(response)))
                     else:
                         for item in response['items']:
                             item['snippet']['publishedAt'] = item['snippet']['publishedAt'].rstrip('Z').replace('T', ' ')
                             item['retrieved_at'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
                             item['source'] = dict()
-                            item['source']['twitter_stream'] = True if video_id['twitter_stream'] == 1 else False
-                            item['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == 1 else False
-                            item['source']['twitter_search'] = True if video_id['twitter_search'] == 1 else False
+                            item['source']['twitter_stream'] = True if video_id['twitter_stream'] == '1' else False
+                            item['source']['youtube_related_video'] = True if video_id['youtube_related_video'] == '1' else False
+                            item['source']['twitter_search'] = True if video_id['twitter_search'] == '1' else False
                             json_writer.write("{}\n".format(json.dumps(item)))
 
         logging.info("Compress file %s", output_json)
@@ -217,7 +217,7 @@ class YoutubeVideoSnippet:
                                                                                uuid.uuid4().hex,
                                                                                num_videos)
         logging.info("Upload file %s to bucket %s at %s", compressed_file, self.s3_data, s3_filename)
-        s3.Bucket(self.s3_data).upload_file(str(compressed_file), s3_filename)
+#        s3.Bucket(self.s3_data).upload_file(str(compressed_file), s3_filename)
 
         logging.info("Recreate table for Youtube channel stats")
         athena.query_athena_and_wait(query_string="DROP TABLE IF EXISTS youtube_video_snippet")
