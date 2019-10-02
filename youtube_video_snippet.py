@@ -75,11 +75,6 @@ create external table if not exists youtube_video_snippet
     etag string,
     id   string,
     retrieved_at timestamp,
-    source struct<
-        twitter_stream: boolean,
-        youtube_related_video: boolean,
-        twitter_search: boolean
-    >,
     snippet struct<
         publishedAt:  timestamp,
         title:        string,
@@ -209,7 +204,7 @@ class YoutubeVideoSnippet:
                                                                                uuid.uuid4().hex,
                                                                                num_videos)
         logging.info("Upload file %s to bucket %s at %s", compressed_file, self.s3_data, s3_filename)
-#        s3.Bucket(self.s3_data).upload_file(str(compressed_file), s3_filename)
+        s3.Bucket(self.s3_data).upload_file(str(compressed_file), s3_filename)
 
         logging.info("Recreate table for Youtube channel stats")
         athena.query_athena_and_wait(query_string="DROP TABLE IF EXISTS youtube_video_snippet")
