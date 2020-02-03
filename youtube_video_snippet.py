@@ -10,6 +10,8 @@ import json
 from datetime import datetime
 import time
 import uuid
+from socket import error as SocketError
+import errno
 
 SELECT_TWITTER_STREAM_VIDEO = """
 select distinct
@@ -279,6 +281,7 @@ class YoutubeVideoSnippet:
 
     LOGGING_INTERVAL = 100
     WAIT_WHEN_SERVICE_UNAVAILABLE = 30
+    WAIT_WHEN_CONNECTION_RESET_BY_PEER = 60
 
     def collect_complementary_video_snippets(self):
         logging.info("Start collecting complementary video snippets")
@@ -402,12 +405,30 @@ class YoutubeVideoSnippet:
                         logging.info("%d out of %d videos processed", num_videos, video_count)
                     num_videos = num_videos + 1
 
+                    connection_reset_by_peer = 0
                     service_unavailable = 0
                     no_response = True
                     while no_response:
                         try:
                             response = youtube.videos().list(part="snippet",id=video_id['video_id']).execute()
                             no_response = False
+                        except SocketError as e:
+                            if e.errno != errno.ECONNRESET:
+                                logging.info("Other socket error!")
+                                raise
+                            else:
+                                connection_reset_by_peer = connection_reset_by_peer + 1
+                                logging.info("Connection reset by peer! {}".format(connection_reset_by_peer))
+                                if connection_reset_by_peer <= 10:
+                                    time.sleep(secs=self.WAIT_WHEN_CONNECTION_RESET_BY_PEER)
+                                    youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                                              version="v3",
+                                                                              developerKey=
+                                                                              self.credentials[current_key][
+                                                                                  'developer_key'],
+                                                                              cache_discovery=False)
+                                else:
+                                    raise
                         except HttpError as e:
                             if "403" in str(e):
                                 logging.info("Invalid {} developer key: {}".format(
