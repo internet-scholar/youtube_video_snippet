@@ -500,7 +500,7 @@ def main():
         #youtube_video_snippet.collect_complementary_video_snippets()
     finally:
         logger.save_to_s3()
-        logger.recreate_athena_table()
+        #logger.recreate_athena_table()
 
 
 if __name__ == '__main__':
