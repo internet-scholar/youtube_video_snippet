@@ -410,6 +410,7 @@ class YoutubeVideoSnippet:
                     connection_reset_by_peer = 0
                     service_unavailable = 0
                     no_response = True
+                    response = dict()
                     while no_response:
                         try:
                             response = youtube.videos().list(part="snippet",id=video_id['video_id']).execute()
