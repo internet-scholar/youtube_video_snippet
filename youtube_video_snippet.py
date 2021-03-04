@@ -331,12 +331,21 @@ class YoutubeVideoSnippet:
                                 if current_key >= len(self.credentials):
                                     raise
                                 else:
-                                    youtube = googleapiclient.discovery.build(serviceName="youtube",
-                                                                              version="v3",
-                                                                              developerKey=
-                                                                              self.credentials[current_key][
-                                                                                  'developer_key'],
-                                                                              cache_discovery=False)
+                                    try:
+                                        youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                                                  version="v3",
+                                                                                  developerKey=
+                                                                                  self.credentials[current_key][
+                                                                                      'developer_key'],
+                                                                                  cache_discovery=False)
+                                    except UnknownApiNameOrVersion as e:
+                                        service = read_dict_from_url(
+                                            url="https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                                        youtube = googleapiclient.discovery.build_from_document(service=service,
+                                                                                                developerKey=
+                                                                                                self.credentials[
+                                                                                                    current_key][
+                                                                                                    'developer_key'])
                             elif "503" in str(e):
                                 logging.info("Service unavailable")
                                 service_unavailable = service_unavailable + 1
@@ -399,11 +408,17 @@ class YoutubeVideoSnippet:
         output_json = Path(Path(__file__).parent, 'tmp', 'youtube_video_snippet.json')
         Path(output_json).parent.mkdir(parents=True, exist_ok=True)
         current_key = 0
-        youtube = googleapiclient.discovery.build(serviceName="youtube",
-                                                  version="v3",
-                                                  developerKey=
-                                                  self.credentials[current_key]['developer_key'],
-                                                  cache_discovery=False)
+        try:
+            youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                      version="v3",
+                                                      developerKey=
+                                                      self.credentials[current_key]['developer_key'],
+                                                      cache_discovery=False)
+        except UnknownApiNameOrVersion as e:
+            service = read_dict_from_url(url="https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+            youtube = googleapiclient.discovery.build_from_document(service=service,
+                                                                    developerKey=self.credentials[current_key][
+                                                                        'developer_key'])
         with open(video_ids_csv, newline='') as csv_reader:
             with open(output_json, 'w') as json_writer:
                 reader = csv.DictReader(csv_reader)
@@ -430,12 +445,21 @@ class YoutubeVideoSnippet:
                                 logging.info("Connection reset by peer! {}".format(connection_reset_by_peer))
                                 if connection_reset_by_peer <= 10:
                                     time.sleep(self.WAIT_WHEN_CONNECTION_RESET_BY_PEER)
-                                    youtube = googleapiclient.discovery.build(serviceName="youtube",
-                                                                              version="v3",
-                                                                              developerKey=
-                                                                              self.credentials[current_key][
-                                                                                  'developer_key'],
-                                                                              cache_discovery=False)
+                                    try:
+                                        youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                                                  version="v3",
+                                                                                  developerKey=
+                                                                                  self.credentials[current_key][
+                                                                                      'developer_key'],
+                                                                                  cache_discovery=False)
+                                    except UnknownApiNameOrVersion as e:
+                                        service = read_dict_from_url(
+                                            url="https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                                        youtube = googleapiclient.discovery.build_from_document(service=service,
+                                                                                                developerKey=
+                                                                                                self.credentials[
+                                                                                                    current_key][
+                                                                                                    'developer_key'])
                                 else:
                                     raise
                         except HttpError as e:
@@ -447,12 +471,21 @@ class YoutubeVideoSnippet:
                                 if current_key >= len(self.credentials):
                                     raise
                                 else:
-                                    youtube = googleapiclient.discovery.build(serviceName="youtube",
-                                                                              version="v3",
-                                                                              developerKey=
-                                                                              self.credentials[current_key][
-                                                                                  'developer_key'],
-                                                                              cache_discovery=False)
+                                    try:
+                                        youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                                                  version="v3",
+                                                                                  developerKey=
+                                                                                  self.credentials[current_key][
+                                                                                      'developer_key'],
+                                                                                  cache_discovery=False)
+                                    except UnknownApiNameOrVersion as e:
+                                        service = read_dict_from_url(
+                                            url="https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+                                        youtube = googleapiclient.discovery.build_from_document(service=service,
+                                                                                                developerKey=
+                                                                                                self.credentials[
+                                                                                                    current_key][
+                                                                                                    'developer_key'])
                             elif "503" in str(e):
                                 logging.info("Service unavailable")
                                 service_unavailable = service_unavailable + 1
