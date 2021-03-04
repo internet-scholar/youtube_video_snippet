@@ -1,10 +1,10 @@
 import argparse
 import random
 import boto3
-from internet_scholar import read_dict_from_s3_url, AthenaLogger, AthenaDatabase, compress
+from internet_scholar import read_dict_from_s3_url, AthenaLogger, AthenaDatabase, compress, read_dict_from_url
 import logging
 import googleapiclient.discovery
-from googleapiclient.errors import HttpError
+from googleapiclient.errors import HttpError, UnknownApiNameOrVersion
 import csv
 from pathlib import Path
 import json
@@ -296,11 +296,17 @@ class YoutubeVideoSnippet:
         output_json = Path(Path(__file__).parent, 'tmp', 'youtube_complementary_video_snippet.json')
         Path(output_json).parent.mkdir(parents=True, exist_ok=True)
         current_key = 0
-        youtube = googleapiclient.discovery.build(serviceName="youtube",
-                                                  version="v3",
-                                                  developerKey=
-                                                  self.credentials[current_key]['developer_key'],
-                                                  cache_discovery=False)
+        try:
+            youtube = googleapiclient.discovery.build(serviceName="youtube",
+                                                      version="v3",
+                                                      developerKey=
+                                                      self.credentials[current_key]['developer_key'],
+                                                      cache_discovery=False)
+        except UnknownApiNameOrVersion as e:
+            service = read_dict_from_url(url="https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+            youtube = googleapiclient.discovery.build_from_document(service=service,
+                                                                    developerKey=self.credentials[current_key][
+                                                                        'developer_key'])
         with open(video_ids_csv, newline='') as csv_reader:
             with open(output_json, 'w') as json_writer:
                 reader = csv.DictReader(csv_reader)
